@@ -1,0 +1,211 @@
+/* common.css – сброс, шрифты, переменные, хедер, футер, модалка, анимации, адаптив для хедера */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --background-1: #1a2340;
+  --background-2: #0b0f1a;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, var(--background-1) 0%, var(--background-2) 80%);
+  color: #e0e6f0;
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ===== Header ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 5%;
+  background: rgba(11, 15, 26, 0.6);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(201, 161, 59, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.logo {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 1.8rem;
+  background: linear-gradient(135deg, #c9a13b, #f5d77b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  white-space: nowrap;
+}
+.logo:hover {
+  transform: scale(1.02);
+}
+.logo span {
+  font-weight: 400;
+  color: #8892b0;
+  -webkit-text-fill-color: #8892b0;
+  background: none;
+  font-size: 1rem;
+  margin-left: 5px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.nav a {
+  color: #a8b2d1;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+  position: relative;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+.nav a:hover {
+  color: #f5d77b;
+}
+.nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: #c9a13b;
+  transition: 0.3s;
+}
+.nav a:hover::after {
+  width: 100%;
+}
+.nav .back-btn {
+  color: #64ffda;
+  border: 1px solid #64ffda;
+  padding: 0.3rem 1rem;
+  border-radius: 30px;
+  font-size: 0.85rem;
+}
+.nav .back-btn:hover {
+  background: rgba(100, 255, 218, 0.1);
+  color: #fff;
+  border-color: #fff;
+}
+.nav .game-link {
+  display: inline-block;
+}
+
+/* ===== Footer ===== */
+.footer {
+  text-align: center;
+  padding: 2rem 5%;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #495670;
+  font-size: 0.9rem;
+  margin-top: 2rem;
+}
+
+/* ===== Модальное окно ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out;
+}
+.modal-overlay.open {
+  display: flex;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.modal {
+  background: #1a2340;
+  border: 1px solid rgba(201, 161, 59, 0.3);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  position: relative;
+  text-align: center;
+}
+.modal .close-btn {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 2rem;
+  color: #a8b2d1;
+  cursor: pointer;
+  transition: 0.3s;
+  background: none;
+  border: none;
+  line-height: 1;
+}
+.modal .close-btn:hover {
+  color: #f5d77b;
+  transform: rotate(90deg);
+}
+.modal h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  color: #c9a13b;
+  margin-bottom: 1rem;
+}
+.modal p {
+  color: #a8b2d1;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+.modal .emoji-big {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* ===== Анимации ===== */
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Адаптив для хедера и модалки ===== */
+@media (max-width: 992px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .logo {
+    text-align: center;
+  }
+  .nav {
+    justify-content: center;
+    gap: 0.8rem 1.2rem;
+  }
+}
+@media (max-width: 480px) {
+  .nav a {
+    font-size: 0.85rem;
+  }
+  .modal {
+    padding: 2rem 1.5rem;
+  }
+}

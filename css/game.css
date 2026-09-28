@@ -1,0 +1,277 @@
+/* game.css – стили для страницы конкретной игры */
+
+.game-container {
+  padding: 0 5%;
+}
+
+/* ===== Герой игры ===== */
+.game-hero {
+  display: flex;
+  align-items: center;
+  min-height: 60vh;
+  gap: 2rem;
+  padding: 0 0 2rem;
+}
+.game-hero-text {
+  flex: 1 1 45%;
+}
+.game-hero-text h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.8rem, 8vw, 4.8rem);
+  background: linear-gradient(135deg, #ffffff, #c9a13b 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 40px rgba(201, 161, 59, 0.2);
+}
+.game-hero-text .subtitle {
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 300;
+  color: #8892b0;
+  letter-spacing: 4px;
+  margin-bottom: 1rem;
+}
+.game-hero-text .description {
+  max-width: 500px;
+  font-size: 1.1rem;
+  color: #a8b2d1;
+  margin-bottom: 2rem;
+}
+.btn-glow {
+  padding: 1rem 3.5rem;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #c9a13b, #a17f2b);
+  color: #0b0f1a;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(201, 161, 59, 0.4);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.btn-glow:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 60px rgba(201, 161, 59, 0.8);
+  background: linear-gradient(135deg, #f5d77b, #c9a13b);
+}
+#welcomeMessage {
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #64ffda;
+  min-height: 3rem;
+}
+
+.game-hero-image {
+  flex: 1 1 50%;
+  height: 55vh;
+  min-height: 250px;
+  overflow: hidden;
+  border-radius: 20px;
+  margin-left: -5%;
+  position: relative;
+  mask-image:
+    linear-gradient(0deg, transparent 0%, black 40%, black 60%, transparent 100%),
+    linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%),
+    radial-gradient(ellipse at 70% 50%, black 40%, transparent 85%);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(0deg, transparent 0%, black 40%, black 60%, transparent 100%),
+    linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%),
+    radial-gradient(ellipse at 70% 50%, black 40%, transparent 85%);
+  -webkit-mask-composite: source-in;
+}
+.game-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(0.5px);
+}
+
+/* ===== Блоки с категориями (фичи) ===== */
+.game-features {
+  max-width: 1300px;
+  margin: 2rem auto 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.feature-card {
+  display: flex;
+  align-items: stretch;
+  border-radius: 20px;
+  border: 1px solid rgba(201, 161, 59, 0.15);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  scroll-margin-top: 100px;
+  background: rgba(26, 35, 64, 0.5);
+  backdrop-filter: blur(5px);
+}
+.feature-card:hover {
+  border-color: #c9a13b;
+  box-shadow: 0 10px 40px rgba(201, 161, 59, 0.3);
+}
+
+.card-left {
+  flex: 0 0 50%;
+  padding: 1.8rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  cursor: default;
+  transition: background 0.2s;
+}
+.card-left:hover {
+  background: rgba(201, 161, 59, 0.08);
+}
+.card-left .icon {
+  font-size: 3rem;
+  flex-shrink: 0;
+}
+.card-content {
+  flex: 1;
+}
+.card-content h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.4rem;
+  color: #f5d77b;
+  margin-bottom: 0.3rem;
+}
+.card-content p {
+  color: #8892b0;
+  font-size: 0.95rem;
+  margin-bottom: 0.8rem;
+}
+
+.card-right {
+  flex: 1;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.3);
+  position: relative;
+  min-height: 180px;
+  overflow: hidden;
+}
+
+.card-image-grid {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+}
+
+.card-image-item {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease;
+}
+.card-right:hover .card-image-item {
+  transform: scale(1.02);
+}
+
+.card-detail-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 15, 26, 0.85);
+  color: #e0e6f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.6;
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 2;
+}
+
+/* ===== Заглушка «В разработке» ===== */
+.coming-soon {
+  text-align: center;
+  padding: 4rem 5%;
+}
+.coming-soon h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  color: #c9a13b;
+  margin-bottom: 1rem;
+}
+.coming-soon p {
+  color: #8892b0;
+  font-size: 1.2rem;
+}
+
+/* ===== Адаптив для детальной страницы ===== */
+@media (max-width: 992px) {
+  .game-hero {
+    flex-direction: column;
+    min-height: auto;
+    padding: 2rem 0;
+  }
+  .game-hero-text {
+    text-align: center;
+  }
+  .game-hero-text .description {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .game-hero-image {
+    height: 40vh;
+    min-height: 200px;
+    width: 100%;
+    margin-left: 0;
+    border-radius: 20px;
+    mask-image: radial-gradient(ellipse at 70% 60%, black 40%, transparent 85%);
+    -webkit-mask-image: radial-gradient(ellipse at 70% 60%, black 40%, transparent 85%);
+  }
+  .feature-card {
+    flex-direction: column;
+  }
+  .card-left {
+    flex: 1;
+    padding: 1.5rem;
+    border-radius: 20px 20px 0 0;
+    border-right: none;
+    border-bottom: 1px solid rgba(201, 161, 59, 0.1);
+  }
+  .card-right {
+    border-left: none;
+    border-top: 1px solid rgba(201, 161, 59, 0.1);
+    min-height: 120px;
+  }
+  .card-image-grid {
+    flex-direction: row;
+    min-height: 120px;
+  }
+  .card-image-item {
+    flex: 1;
+    clip-path: none !important;
+    border-right: 1px solid rgba(255,255,255,0.1);
+  }
+  .card-image-item:last-child {
+    border-right: none;
+  }
+}
+@media (max-width: 480px) {
+  .card-left {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  .card-content {
+    flex: 1 1 100%;
+  }
+}

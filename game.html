@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guild Lust — Детальная страница</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="css/game.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="logo" id="logo" title="Информация">Guild<span>Lust</span></div>
+    <nav class="nav" id="mainNav">
+      <a id="navHeroes" class="game-link">Герои</a>
+      <a id="navBuilds" class="game-link">Сборки</a>
+      <a id="navTips" class="game-link">Советы</a>
+      <a id="navBack" class="back-btn" href="index.html">← Назад</a>
+    </nav>
+  </header>
+
+  <main>
+    <div id="gameContent"></div>
+  </main>
+
+  <!-- Модальное окно -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="close-btn" id="modalClose">&times;</button>
+      <span class="emoji-big">🏆</span>
+      <h2>Награды и отзывы</h2>
+      <p>Наград и отзывов нет, пока мы лошары без всего.</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2026 Guild Lust. Создано для фанатов игр.</p>
+  </footer>
+
+  <script src="data/games.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

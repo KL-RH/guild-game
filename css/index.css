@@ -1,0 +1,81 @@
+/* index.css – стили только для главной страницы */
+
+.main-hero {
+  text-align: center;
+  padding: 4rem 5% 2rem;
+}
+.main-hero h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(3rem, 8vw, 5rem);
+  background: linear-gradient(135deg, #f5d77b, #c9a13b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.3rem;
+  letter-spacing: 4px;
+  text-shadow: 0px 0px 40px rgba(201, 161, 59, 0.5);
+}
+.main-hero .tagline {
+  font-size: 1.3rem;
+  color: #8892b0;
+  letter-spacing: 2px;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+.main-hero p {
+  color: #8892b0;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto 1rem;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto 4rem;
+  padding: 0 5%;
+}
+
+.game-card {
+  border-radius: 20px;
+  border: 1px solid rgba(201, 161, 59, 0.15);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  background: rgba(26, 35, 64, 0.3);
+  backdrop-filter: blur(5px);
+}
+.game-card:hover {
+  transform: translateY(-10px);
+  border-color: #c9a13b;
+  box-shadow: 0 20px 40px rgba(201, 161, 59, 0.5);
+}
+.game-card .game-icon {
+  font-size: 4rem;
+  margin-bottom: 0.8rem;
+  display: block;
+}
+.game-card h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.4rem;
+  color: #f5d77b;
+  margin-bottom: 0.5rem;
+}
+.game-card p {
+  color: #8892b0;
+  font-size: 0.95rem;
+}
+.game-card .badge {
+  display: inline-block;
+  margin-top: 0.8rem;
+  background: rgba(201, 161, 59, 0.2);
+  color: #c9a13b;
+  padding: 0.2rem 1rem;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
