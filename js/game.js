@@ -1,95 +1,152 @@
-// game.js – чтение параметра game, рендеринг контента
+// game.js – читаем URL, решаем что рендерить
 document.addEventListener('DOMContentLoaded', function() {
-  const params = new URLSearchParams(window.location.search);
-  const gameId = params.get('game');
-  const gameContent = document.getElementById('gameContent');
+  var gameContent = document.getElementById('gameContent');
   if (!gameContent) return;
 
-  const games = window.GAMES || [];
-  const game = games.find(function(g) { return g.id === gameId; });
+  // Разбираем путь /game/mlbb/sovety/  →  ['game', 'mlbb', 'sovety']
+  var pathParts = window.location.pathname.split('/').filter(Boolean);
+  var params = new URLSearchParams(window.location.search);
+  var games = window.GAMES || [];
 
-  // Если игра не найдена или в разработке
+  var gameId = null;
+  var section = null;
+
+  if (pathParts[0] === 'game' && pathParts.length >= 2) {
+    gameId = pathParts[1];
+    if (pathParts.length >= 3) section = pathParts[2];
+  } else {
+    gameId = params.get('game');
+    section = params.get('section');
+  }
+
+  // Ищем игру в данных
+  var game = null;
+  for (var i = 0; i < games.length; i++) {
+    if (games[i].id === gameId) { game = games[i]; break; }
+  }
+
+  // Заглушка "в разработке"
   if (!game || game.status === 'coming_soon') {
-    const name = game ? game.name : gameId;
-    gameContent.innerHTML = `
-      <div class="game-container">
-        <div class="coming-soon">
-          <h2>🚧 В разработке</h2>
-          <p>Гид для игры <strong>${name}</strong> скоро появится. Следите за обновлениями!</p>
-        </div>
-      </div>
-    `;
+    var name = game ? game.name : gameId;
+    gameContent.innerHTML = '<div class="game-container"><div class="coming-soon">' +
+      '<h2>🚧 В разработке</h2>' +
+      '<p>Гид для игры <strong>' + (name || 'неизвестной') + '</strong> скоро появится. Следите за обновлениями!</p>' +
+      '</div></div>';
     return;
   }
 
-  const detail = game.detail;
+  var detail = game.detail;
   if (!detail) {
     gameContent.innerHTML = '<div class="game-container"><p>Нет данных об игре</p></div>';
     return;
   }
 
-  // Строим HTML – теперь ВСЁ обёрнуто в .game-container
-  let html = `
-    <div class="game-container">
-      <div class="game-hero">
-        <div class="game-hero-text">
-          <h1>${detail.title}</h1>
-          <p class="subtitle">${detail.subtitle}</p>
-          <p class="description">${detail.description}</p>
-          <button class="btn-glow" id="startBtn">Начать исследование</button>
-          <div id="welcomeMessage"></div>
-        </div>
-        <div class="game-hero-image">
-          <img src="${detail.heroImage}" onerror="this.src='https://via.placeholder.com/800x600/1a2340/c9a13b?text=Hero+MLBB'" />
-        </div>
-      </div>
-      <div class="game-features" id="cardsContainer"></div>
-    </div>
-  `;
+  // Навигация — ВСЕГДА, на любой странице игры
+  setupNav(game);
+
+  // Контент — либо страница советов, либо обычная страница игры
+  if (section === 'sovety') {
+    renderTipsPage(game);
+  } else {
+    renderGamePage(game, detail, section);
+  }
+});
+
+// ---------- Навигация в хедере ----------
+function setupNav(game) {
+  var navHeroes = document.getElementById('navHeroes');
+  var navBuilds = document.getElementById('navBuilds');
+  var navTips = document.getElementById('navTips');
+  var navBack = document.getElementById('navBack');
+
+  if (navHeroes) {
+    navHeroes.addEventListener('click', function() {
+      window.location.href = '/game/' + game.id + '/heroes/';
+    });
+  }
+  if (navBuilds) {
+    navBuilds.addEventListener('click', function() {
+      window.location.href = '/game/' + game.id + '/builds/';
+    });
+  }
+  if (navTips) {
+    navTips.addEventListener('click', function() {
+      window.location.href = '/game/' + game.id + '/sovety/';
+    });
+  }
+  if (navBack) {
+    navBack.addEventListener('click', function(e) {
+      e.preventDefault();
+      // Если пришли внутри сайта — возвращаемся по истории,
+      // иначе уходим на главную
+      if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+        window.history.back();
+      } else {
+        window.location.href = '/index.html';
+      }
+    });
+  }
+}
+
+// ---------- Обычная страница игры ----------
+function renderGamePage(game, detail, section) {
+  var gameContent = document.getElementById('gameContent');
+  var html = '<div class="game-container">' +
+    '<div class="game-hero">' +
+    '<div class="game-hero-text">' +
+    '<h1>' + detail.title + '</h1>' +
+    '<p class="subtitle">' + detail.subtitle + '</p>' +
+    '<p class="description">' + detail.description + '</p>' +
+    '<button class="btn-glow" id="startBtn">Начать исследование</button>' +
+    '<div id="welcomeMessage"></div>' +
+    '</div>' +
+    '<div class="game-hero-image">' +
+    '<img src="' + detail.heroImage + '" onerror="this.src=\'https://via.placeholder.com/800x600/1a2340/c9a13b?text=Hero\'" />' +
+    '</div>' +
+    '</div>' +
+    '<div class="game-features" id="cardsContainer"></div>' +
+    '</div>';
   gameContent.innerHTML = html;
 
-  // Рендерим категории
-  const container = document.getElementById('cardsContainer');
+  var container = document.getElementById('cardsContainer');
   if (container && detail.categories) {
-    const clipPaths = [
+    var clipPaths = [
       'polygon(0 0, 100% 0, 80% 100%, 0 100%)',
       'polygon(20% 0, 80% 0, 100% 100%, 0 100%)',
       'polygon(0 0, 100% 0, 100% 100%, 20% 100%)'
     ];
 
-    detail.categories.forEach(function(cat, index) {
-      const card = document.createElement('div');
+    for (var j = 0; j < detail.categories.length; j++) {
+      var cat = detail.categories[j];
+      var card = document.createElement('div');
       card.className = 'feature-card';
       card.id = 'card-' + cat.id;
 
-      const leftDiv = document.createElement('div');
+      var leftDiv = document.createElement('div');
       leftDiv.className = 'card-left';
-      leftDiv.innerHTML = `
-        <div class="icon">${cat.icon}</div>
-        <div class="card-content">
-          <h3>${cat.title}</h3>
-          <p>${cat.shortDesc}</p>
-        </div>
-      `;
+      leftDiv.innerHTML = '<div class="icon">' + cat.icon + '</div>' +
+        '<div class="card-content">' +
+        '<h3>' + cat.title + '</h3>' +
+        '<p>' + cat.shortDesc + '</p>' +
+        '</div>';
 
-      const rightDiv = document.createElement('div');
+      var rightDiv = document.createElement('div');
       rightDiv.className = 'card-right';
-      const grid = document.createElement('div');
+      var grid = document.createElement('div');
       grid.className = 'card-image-grid';
 
-      cat.images.forEach(function(url, i) {
-        const item = document.createElement('div');
+      for (var k = 0; k < cat.images.length; k++) {
+        var item = document.createElement('div');
         item.className = 'card-image-item';
-        item.style.backgroundImage = 'url(' + url + ')';
-        const clip = clipPaths[i % clipPaths.length];
+        item.style.backgroundImage = 'url(' + cat.images[k] + ')';
+        var clip = clipPaths[k % clipPaths.length];
         item.style.clipPath = clip;
         item.style.webkitClipPath = clip;
         grid.appendChild(item);
-      });
-
+      }
       rightDiv.appendChild(grid);
 
-      const overlay = document.createElement('div');
+      var overlay = document.createElement('div');
       overlay.className = 'card-detail-overlay';
       overlay.textContent = cat.longDesc;
       rightDiv.appendChild(overlay);
@@ -98,44 +155,135 @@ document.addEventListener('DOMContentLoaded', function() {
       card.appendChild(rightDiv);
       container.appendChild(card);
 
-      // Показываем оверлей при наведении на левую часть
-      leftDiv.addEventListener('mouseenter', function() {
-        overlay.style.opacity = '1';
-      });
-      leftDiv.addEventListener('mouseleave', function() {
-        overlay.style.opacity = '0';
-      });
-    });
+      // hover-эффект
+      (function(ld, ov) {
+        ld.addEventListener('mouseenter', function() { ov.style.opacity = '1'; });
+        ld.addEventListener('mouseleave', function() { ov.style.opacity = '0'; });
+      })(leftDiv, overlay);
+
+      // Клик по карточке — переход в раздел игры
+      (function(cardEl, catId, gId) {
+        cardEl.style.cursor = 'pointer';
+        cardEl.addEventListener('click', function() {
+          if (catId === 'tips') {
+            window.location.href = '/game/' + gId + '/sovety/';
+          } else if (catId === 'heroes') {
+            window.location.href = '/game/' + gId + '/heroes/';
+          } else if (catId === 'builds') {
+            window.location.href = '/game/' + gId + '/builds/';
+          }
+        });
+      })(card, cat.id, game.id);
+    }
   }
 
   // Кнопка "Начать исследование"
-  const startBtn = document.getElementById('startBtn');
-  const messageBlock = document.getElementById('welcomeMessage');
+  var startBtn = document.getElementById('startBtn');
+  var messageBlock = document.getElementById('welcomeMessage');
   if (startBtn && messageBlock) {
     startBtn.addEventListener('click', function() {
       messageBlock.innerHTML = '✨ Добро пожаловать! Впереди — база героев и мета-сборки. но пока, нас ограбили(';
-      this.textContent = 'Уже в пути!';
-      this.style.opacity = '0.8';
-      this.style.transform = 'scale(0.95)';
+      var btn = this;
+      btn.textContent = 'Уже в пути!';
+      btn.style.opacity = '0.8';
+      btn.style.transform = 'scale(0.95)';
       setTimeout(function() {
-        startBtn.textContent = 'Начать исследование';
-        startBtn.style.opacity = '1';
-        startBtn.style.transform = 'scale(1)';
+        btn.textContent = 'Начать исследование';
+        btn.style.opacity = '1';
+        btn.style.transform = 'scale(1)';
       }, 3000);
     });
   }
 
-  // Обработка кликов по навигационным ссылкам (скролл к карточкам)
-  const navHeroes = document.getElementById('navHeroes');
-  const navBuilds = document.getElementById('navBuilds');
-  const navTips = document.getElementById('navTips');
+  // Если открыт /heroes/ или /builds/ — скроллим к нужной секции
+  if (section) {
+    setTimeout(function() {
+      var target = document.getElementById('card-' + section);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+  }
+}
 
-  function scrollToCard(id) {
-    const card = document.getElementById('card-' + id);
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// ---------- Страница советов ----------
+function renderTipsPage(game) {
+  var gameContent = document.getElementById('gameContent');
+  var html = '<div class="game-container">' +
+    '<h1 class="page-title">Советы для ' + game.name + '</h1>' +
+    '<p class="page-subtitle">Делитесь опытом с сообществом</p>' +
+    '<div class="tips-grid" id="tipsGrid"></div>' +
+    '<h2 class="form-title">Добавить свой совет</h2>' +
+    '<form id="tipForm" class="tip-form">' +
+    '<input type="text" id="tipAuthor" placeholder="Ваш ник" required>' +
+    '<textarea id="tipText" placeholder="Текст совета" required></textarea>' +
+    '<button type="submit" class="btn-glow">Отправить</button>' +
+    '</form>' +
+    '</div>';
+  gameContent.innerHTML = html;
+
+  loadTips(game.id);
+  setupTipForm(game.id);
+}
+
+// Загружаем советы: сначала из localStorage, если пусто — из games.js
+function loadTips(gameId) {
+  var grid = document.getElementById('tipsGrid');
+  if (!grid) return;
+
+  var storageKey = 'tips_' + gameId;
+  var stored = localStorage.getItem(storageKey);
+  var tips;
+
+  if (stored) {
+    tips = JSON.parse(stored);
+  } else {
+    var game = null;
+    for (var i = 0; i < window.GAMES.length; i++) {
+      if (window.GAMES[i].id === gameId) { game = window.GAMES[i]; break; }
+    }
+    tips = (game && game.tips) ? game.tips : [];
+    localStorage.setItem(storageKey, JSON.stringify(tips));
   }
 
-  if (navHeroes) navHeroes.addEventListener('click', function(e) { e.preventDefault(); scrollToCard('heroes'); });
-  if (navBuilds) navBuilds.addEventListener('click', function(e) { e.preventDefault(); scrollToCard('builds'); });
-  if (navTips) navTips.addEventListener('click', function(e) { e.preventDefault(); scrollToCard('tips'); });
-});
+  if (tips.length === 0) {
+    grid.innerHTML = '<p class="empty-message">Пока нет советов. Будьте первым!</p>';
+    return;
+  }
+
+  grid.innerHTML = '';
+  for (var j = 0; j < tips.length; j++) {
+    var tip = tips[j];
+    var card = document.createElement('div');
+    card.className = 'tip-card';
+    card.innerHTML = '<div class="tip-author">' + tip.author + '</div>' +
+      '<div class="tip-text">' + tip.text + '</div>' +
+      '<div class="tip-date">' + tip.date + '</div>';
+    grid.appendChild(card);
+  }
+}
+
+// Обработка формы добавления совета
+function setupTipForm(gameId) {
+  var form = document.getElementById('tipForm');
+  if (!form) return;
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var author = document.getElementById('tipAuthor').value.trim();
+    var text = document.getElementById('tipText').value.trim();
+    if (!author || !text) return;
+
+    var newTip = {
+      author: author,
+      text: text,
+      date: new Date().toLocaleDateString('ru-RU')
+    };
+
+    var storageKey = 'tips_' + gameId;
+    var tips = JSON.parse(localStorage.getItem(storageKey)) || [];
+    tips.push(newTip);
+    localStorage.setItem(storageKey, JSON.stringify(tips));
+
+    loadTips(gameId);
+    form.reset();
+  });
+}
