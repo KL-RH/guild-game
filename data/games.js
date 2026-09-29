@@ -1,5 +1,10 @@
-// data/games.js (скомпилировано из games.ts)
-var GAMES = [
+"use strict";
+// data/games.ts
+// Говорим TypeScript, что у window есть свойство GAMES
+// Говорим TypeScript, что у window есть свойство GAMES
+//
+// 4. Типизированный массив игр
+const GAMES = [
     {
         id: 'mlbb',
         name: 'Mobile Legends',
@@ -84,4 +89,5 @@ var GAMES = [
         detail: null
     }
 ];
+// Делаем массив доступным из HTML
 window.GAMES = GAMES;
