@@ -3,27 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guild Lust — Детальная страница</title>
+  <title>Guild Lust — Советы Mobile Legends</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/common.css" />
-  <link rel="stylesheet" href="/css/game.css" />
+  <link rel="stylesheet" href="/css/sovety.css" />
 </head>
 <body>
   <header class="header">
     <div class="logo" id="logo" title="Информация">Guild<span>Lust</span></div>
-    <nav class="nav" id="mainNav">
-      <a id="navHeroes" class="game-link">Герои</a>
-      <a id="navBuilds" class="game-link">Сборки</a>
-      <a id="navTips" class="game-link">Советы</a>
-      <a id="navBack" class="back-btn" href="index.html">← Назад</a>
+    <nav class="nav">
+      <a href="/game/mlbb/heroes/">Герои</a>
+      <a href="/game/mlbb/builds/">Сборки</a>
+      <a href="/game/mlbb/sovety/" class="active">Советы</a>
+      <a href="/index.html" class="back-btn">← Главная</a>
     </nav>
   </header>
 
-  <main>
-    <div id="gameContent"></div>
+  <main class="tips-page">
+    <h1 class="page-title">Советы для Mobile Legends</h1>
+    <p class="page-subtitle">Делитесь опытом с сообществом</p>
+
+    <h2 class="form-title">Добавить свой совет</h2>
+    <form id="tipForm" class="tip-form">
+      <div class="form-field">
+        <label for="tipAuthor">Ваш ник</label>
+        <input type="text" id="tipAuthor" placeholder="Например, ProGamer" maxlength="30" required>
+      </div>
+      <div class="form-field">
+        <label for="tipText">Текст совета</label>
+        <textarea id="tipText" placeholder="Поделитесь опытом с новичками..." maxlength="500" required></textarea>
+      </div>
+      <button type="submit" class="btn-glow">Отправить</button>
+    </form>
+
+    <h2 class="tips-list-title">Советы игроков</h2>
+    <div class="tips-grid" id="tipsGrid">
+      <p class="tips-loading">Загрузка советов...</p>
+    </div>
   </main>
 
-  <!-- Модальное окно -->
+  <footer class="footer">
+    <p>© 2026 Guild Lust. Создано для фанатов игр.</p>
+  </footer>
+
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <button class="close-btn" id="modalClose">&times;</button>
@@ -33,12 +55,112 @@
     </div>
   </div>
 
-  <footer class="footer">
-    <p>© 2026 Guild Lust. Создано для фанатов игр.</p>
-  </footer>
-
-  <script src="/data/games.js"></script>
   <script src="/js/common.js"></script>
-  <script src="/js/game.js"></script>
+
+  <script>
+    (function() {
+      var GAME_ID = 'mlbb';
+      var STORAGE_KEY = 'tips_' + GAME_ID;
+
+      var grid = document.getElementById('tipsGrid');
+      var form = document.getElementById('tipForm');
+      var authorInput = document.getElementById('tipAuthor');
+      var textInput = document.getElementById('tipText');
+      var submitBtn = form.querySelector('button[type="submit"]');
+
+      function renderTips(tips) {
+        grid.innerHTML = '';
+        if (!tips || tips.length === 0) {
+          grid.innerHTML = '<p class="tips-empty">Пока нет советов. Будьте первым!</p>';
+          return;
+        }
+        for (var i = tips.length - 1; i >= 0; i--) {
+          var tip = tips[i];
+          var card = document.createElement('div');
+          card.className = 'tip-card';
+          card.innerHTML =
+            '<div class="tip-icon">💬</div>' +
+            '<div class="tip-body">' +
+              '<div class="tip-author">' + escapeHtml(tip.author) + '</div>' +
+              '<div class="tip-text">' + escapeHtml(tip.text) + '</div>' +
+              '<div class="tip-date">' + escapeHtml(tip.date) + '</div>' +
+            '</div>';
+          grid.appendChild(card);
+        }
+      }
+
+//-----------------------------------
+      function loadTipsFromServer() {
+        return new Promise(function(resolve) {
+          setTimeout(function() {
+            var stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+              resolve(JSON.parse(stored));
+              return;
+            }
+            var games = window.GAMES || [];
+            var seed = [];
+            for (var i = 0; i < games.length; i++) {
+              if (games[i].id === GAME_ID && games[i].tips) {
+                seed = games[i].tips.slice();
+                break;
+              }
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+            resolve(seed);
+          }, 200);
+        });
+      }
+
+      function sendTipToServer(payload) {
+        return new Promise(function(resolve) {
+          setTimeout(function() {
+            var tips = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            var newTip = {
+              author: payload.author,
+              text: payload.text,
+              date: new Date().toLocaleDateString('ru-RU')
+            };
+            tips.push(newTip);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tips));
+            resolve(newTip);
+          }, 200);
+        });
+      }
+      function loadTips() {
+        grid.innerHTML = '<p class="tips-loading">Загрузка советов...</p>';
+        loadTipsFromServer()
+          .then(renderTips)
+          .catch(function(err) {
+            grid.innerHTML = '<p class="tips-empty">Не удалось загрузить советы.</p>';
+            console.error('loadTips:', err);
+          });
+      }
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var author = authorInput.value.trim();
+        var text = textInput.value.trim();
+        if (!author || !text) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Отправка...';
+
+        sendTipToServer({ author: author, text: text })
+          .then(function() {
+            form.reset();
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Отправить';
+            loadTips();
+          })
+          .catch(function(err) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Отправить';
+            alert('Не удалось отправить совет.');
+            console.error('sendTip:', err);
+          });
+      });
+      loadTips();
+    })();
+  </script>
 </body>
 </html>

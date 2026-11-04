@@ -1,0 +1,85 @@
+.heroes-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 5% 4rem;
+}
+
+.page-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  background: linear-gradient(135deg, #f5d77b, #c9a13b);
+  background-clip: text;
+  margin: 0 0 0.5rem;
+  letter-spacing: 2px;
+}
+.page-subtitle {
+  color: #8892b0;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.nav a.active {
+  color: #f5d77b;
+}
+.nav a.active::after {
+  width: 100%;
+}
+
+.heroes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 1.5rem 1rem;
+}
+
+.hero-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.hero-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 161, 59, 0.4);
+  background: rgba(26, 35, 64, 0.5);
+  background-size: cover;
+  background-position: center;
+  transition: 0.3s;
+}
+
+.hero-name {
+  margin-top: 0.5rem;
+  height: 1.2em;
+  color: #f5d77b;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  text-align: center;
+  opacity: 0;
+  transition: 0.3s;
+  white-space: nowrap;
+}
+
+.hero-circle:hover .hero-img {
+  border-color: #f5d77b;
+  box-shadow: 0 0 25px rgba(201, 161, 59, 0.6);
+  transform: scale(1.05);
+}
+.hero-circle:hover .hero-name {
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .heroes-page {
+    padding: 1.5rem 5% 3rem;
+  }
+  .heroes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  }
+  .hero-img {
+    width: 80px;
+    height: 80px;
+  }
+}

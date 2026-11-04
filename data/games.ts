@@ -1,7 +1,9 @@
-// data/games.ts
-// Говорим TypeScript, что у window есть свойство GAMES
+interface Tip {
+  author: string;
+  text: string;
+  date: string;
+}
 
-// 1. Тип для одной категории (Герои, Сборки, Советы)
 interface Category {
   id: string;
   icon: string;
@@ -11,7 +13,6 @@ interface Category {
   images: string[];
 }
 
-// 2. Тип для детальной информации об игре
 interface GameDetail {
   title: string;
   subtitle: string;
@@ -20,7 +21,6 @@ interface GameDetail {
   categories: Category[];
 }
 
-// 3. Тип для одной игры
 interface Game {
   id: string;
   name: string;
@@ -28,10 +28,15 @@ interface Game {
   description: string;
   status: 'available' | 'coming_soon';
   detail: GameDetail | null;
+  tips: Tip[] | null;
 }
-// Говорим TypeScript, что у window есть свойство GAMES
-//
-// 4. Типизированный массив игр
+
+declare global {
+  interface Window {
+    GAMES: Game[];
+  }
+}
+
 const GAMES: Game[] = [
   {
     id: 'mlbb',
@@ -82,7 +87,12 @@ const GAMES: Game[] = [
           ]
         }
       ]
-    }
+    },
+    tips: [
+      { author: 'ProGamer', text: 'Всегда покупайте антихил против Эстес.', date: '2026-09-15' },
+      { author: 'MythicKing', text: 'Лучший старт для лесника — синий баф.', date: '2026-09-20' },
+      { author: 'LaneMaster', text: 'Не забывайте про вижн на линии.', date: '2026-09-25' }
+    ]
   },
   {
     id: 'dota2',
@@ -90,7 +100,8 @@ const GAMES: Game[] = [
     icon: '🏹',
     description: 'Герои, предметы, мета-сборки',
     status: 'coming_soon',
-    detail: null
+    detail: null,
+    tips: null
   },
   {
     id: 'valorant',
@@ -98,7 +109,8 @@ const GAMES: Game[] = [
     icon: '🔫',
     description: 'Агенты, тактики, оружейные сборки',
     status: 'coming_soon',
-    detail: null
+    detail: null,
+    tips: null
   },
   {
     id: 'lol',
@@ -106,7 +118,8 @@ const GAMES: Game[] = [
     icon: '🏆',
     description: 'Чемпионы, предметы, руны',
     status: 'coming_soon',
-    detail: null
+    detail: null,
+    tips: null
   },
   {
     id: 'cs2',
@@ -114,9 +127,10 @@ const GAMES: Game[] = [
     icon: '💥',
     description: 'Карты, тактики, оружие',
     status: 'coming_soon',
-    detail: null
+    detail: null,
+    tips: null
   }
 ];
 
-// Делаем массив доступным из HTML
+
 (window as any).GAMES = GAMES;
